@@ -1,3 +1,7 @@
-import numpy as np 
+import pandas as pd
 
-print('Wassup Gangsta ')
+# Load the data
+df = pd.read_csv('data.csv', sep=';')
+
+# Display column names
+print(df.columns)
