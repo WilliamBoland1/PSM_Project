@@ -18,6 +18,8 @@ df_Stbd = df[df['var'] == 'gunnerus/RVG_mqtt/hcx_stbd_mp/LoadFeedback']
 
 # Merge engine 1 and engine 3 data on 'timestamp' and calculate total engine load
 df_engine_loads = pd.merge(df_engine_1[['timestamp', 'value']], df_engine_3[['timestamp', 'value']], on='timestamp', how='outer', suffixes=('_engine1', '_engine3'))
+
+# Fill NaN values with 0 for engine 3 if it's sometimes off
 df_engine_loads = df_engine_loads.fillna({'value_engine3': 0})
 df_engine_loads = df_engine_loads.rename(columns={'value_engine1': 'engine1_load', 'value_engine3': 'engine3_load'})
 
@@ -36,17 +38,7 @@ df_final = pd.merge(df_merged, df_engine_loads[['timestamp', 'total_engine_load'
 # Calculate efficiency, handling cases where total engine load is zero
 df_final['efficiency'] = (df_final['total_propulsion_power'] / df_final['total_engine_load']).where(df_final['total_engine_load'] > 0) * 100
 
-# Filter out anomalous efficiency values for analysis (e.g., greater than 100% or less than 0%)
-anomalies = df_final[(df_final['efficiency'] > 100) | (df_final['efficiency'] < 0)]
-
-# Print out the anomalous values
-print("Anomalous Efficiency Values:")
-print(anomalies[['timestamp', 'total_engine_load', 'total_propulsion_power', 'efficiency']])
-
-# Optional: Save the anomalies to a CSV for detailed analysis
-anomalies.to_csv('anomalous_efficiency_values.csv', index=False)
-
-# Plot the efficiency over time (after filtering out anomalies if needed)
+# Plot efficiency over time
 plt.figure(figsize=(12, 6))
 plt.plot(df_final['timestamp'], df_final['efficiency'], label='Power Efficiency', color='purple')
 plt.xlabel('Time')
