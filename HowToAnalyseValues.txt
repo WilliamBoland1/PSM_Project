@@ -1,0 +1,20 @@
+#This is a file whith pro tips to print out values and analyse them
+
+#Analyse, Print different collumns: 
+print(df_merged[['Port_motor_power', 'Starboard_motor_power', 'total_propulsion_power']])
+
+#Analyse, Print first few row (.head(), .tail()): 
+print(df_merged[['Port_motor_power', 'Starboard_motor_power', 'total_propulsion_power']].head())
+
+#Analyse, Print row by row: 
+for index, row in df_merged.iterrows():
+    print(f"Row {index}: Port Power = {row['Port_motor_power']}, Starboard Power = {row['Starboard_motor_power']}, Total Power = {row['total_propulsion_power']}")
+
+#Get the Column Names:
+print(df_merged.columns)
+
+#Count the Number of Columns:
+print(len(df_merged.columns))
+
+#Display Column Names and Data Types:
+print(df_merged.info())
