@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Density assumed
-density = 0.85
+density = 0.82
 
 # Load the data
 df = pd.read_csv('data.csv', sep=';')

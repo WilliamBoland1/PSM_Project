@@ -62,7 +62,6 @@ df_final = pd.merge(df_merged, df_engine_loads[['timestamp', 'total_engine_load'
 # Calculate efficiency, handling cases where total engine load is zero
 df_final['efficiency'] = (df_final['total_propulsion_power'] / df_final['total_engine_load']).where(df_final['total_engine_load'] > 0) * 100
 
-
 # Plot efficiency over time
 plt.figure(figsize=(12, 6))
 plt.plot(df_final['timestamp'], df_final['efficiency'], label='Power Efficiency', color='purple')
@@ -77,10 +76,10 @@ plt.tight_layout()
 plt.show()
 
 #______________________________________________________________________________________________________________________________
-
+#ENERGY EFFICIENCY
 #Finding mean efficiency using the IQR method, according to page 152 in the compendium this answers to the energy efficiency
 mean = df_final['efficiency'].mean()
-print(f'unfiltered mean {mean}')
+print(f'Unfiltered mean {mean}')
 
 # Calculate Q1 (25th percentile) and Q3 (75th percentile)
 Q1 = df_final['efficiency'].quantile(0.25)
