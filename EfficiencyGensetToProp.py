@@ -67,19 +67,19 @@ df_efficiencies_power['Generator_Total_Power'] = df_efficiencies_power['SW_Total
 df_efficiencies_power['Engine_Port_Power'] = df_efficiencies_power['Generator_Port_Power'] / eta_generator
 df_efficiencies_power['Engine_Stbd_Power'] = df_efficiencies_power['Generator_Stbd_Power'] / eta_generator
 df_efficiencies_power['Engine_Total_Power'] = df_efficiencies_power['Generator_Total_Power'] / eta_generator
-print(df_efficiencies_power[['Engine_Port_Power', 'Engine_Stbd_Power', 'Engine_Total_Power']].head())
+#print(df_efficiencies_power[['Engine_Port_Power', 'Engine_Stbd_Power', 'Engine_Total_Power']].head())
 
 #Step 4: Calculate the rate of Power as a percentage. 
 df_efficiencies_power['Engine_Port_Rated_Power'] = df_efficiencies_power['Engine_Port_Power'] / genset_power *100
 df_efficiencies_power['Engine_Stbd_Rated_Power'] = df_efficiencies_power['Engine_Port_Power'] / genset_power *100
 df_efficiencies_power['Engine_Total_Rated_Power'] = df_efficiencies_power['Engine_Total_Power'] / gensets_total_power *100
-print(df_efficiencies_power[['Engine_Port_Rated_Power', 'Engine_Stbd_Rated_Power', 'Engine_Total_Rated_Power']].head())
+#print(df_efficiencies_power[['Engine_Port_Rated_Power', 'Engine_Stbd_Rated_Power', 'Engine_Total_Rated_Power']].head())
 
 #Step 5: Calculate engine efficiency: 
 df_efficiencies_power['Engine_Port_Efficiency'] = df_efficiencies_power['Engine_Port_Rated_Power'].apply(eta_engine) /100
 df_efficiencies_power['Engine_Stbd_Efficiency'] = df_efficiencies_power['Engine_Stbd_Rated_Power'].apply(eta_engine) /100
 df_efficiencies_power['Engine_Total_Efficiency'] = df_efficiencies_power['Engine_Total_Rated_Power'].apply(eta_engine) /100
-print(df_efficiencies_power[['Engine_Port_Efficiency', 'Engine_Stbd_Efficiency', 'Engine_Total_Efficiency']].head())
+#print(df_efficiencies_power[['Engine_Port_Efficiency', 'Engine_Stbd_Efficiency', 'Engine_Total_Efficiency']].head())
 
 
 #Step 6: Calculate Power efficiency 
