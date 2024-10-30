@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 #Density assumed
-density = 0.85
+density = 0.82
 
 #Load the data
 df = pd.read_csv('data.csv', sep=';')
@@ -13,7 +13,6 @@ df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True)
 
 #Filter data for specific engines
 df_engine_1 = df[df['var'] == 'gunnerus/RVG_mqtt/Engine1/fuel_consumption']
-# df_engine_2 = df[df['var'] == 'gunnerus/RVG_mqtt/Engine2/fuel_consumption'] Engine not active
 df_engine_3 = df[df['var'] == 'gunnerus/RVG_mqtt/Engine3/fuel_consumption']
 
 #Define the adjustable start and stop interval for plotting
