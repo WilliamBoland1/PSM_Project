@@ -101,8 +101,8 @@ df_route2 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route2_
 
 #Step 7: Plot power efficiency
 plt.figure(figsize=(12, 6)) 
-plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Port_Efficiency'], label='Port Efficiency')
-plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Stbd_Efficiency'], label='Stbd Efficiency')
+#plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Port_Efficiency'], label='Port Efficiency')
+#plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Stbd_Efficiency'], label='Stbd Efficiency')
 plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Total_Efficiency'], label='Total Efficiency')
 plt.title('Engine Power Efficiencies Over Time')
 plt.xlabel('Timestamp')
@@ -114,8 +114,8 @@ plt.show()
 
 # Route 1 plot
 plt.figure(figsize=(12, 6))
-plt.plot(df_route1['timestamp'], df_route1['Power_Port_Efficiency'], label='Port Efficiency')
-plt.plot(df_route1['timestamp'], df_route1['Power_Stbd_Efficiency'], label='Stbd Efficiency')
+#plt.plot(df_route1['timestamp'], df_route1['Power_Port_Efficiency'], label='Port Efficiency')
+#plt.plot(df_route1['timestamp'], df_route1['Power_Stbd_Efficiency'], label='Stbd Efficiency')
 plt.plot(df_route1['timestamp'], df_route1['Power_Total_Efficiency'], label='Total Efficiency')
 plt.title('Engine Power Efficiencies Over Time - Route 1')
 plt.xlabel('Timestamp')
@@ -126,8 +126,8 @@ plt.show()
 
 # Route 2 plot
 plt.figure(figsize=(12, 6))
-plt.plot(df_route2['timestamp'], df_route2['Power_Port_Efficiency'], label='Port Efficiency')
-plt.plot(df_route2['timestamp'], df_route2['Power_Stbd_Efficiency'], label='Stbd Efficiency')
+#plt.plot(df_route2['timestamp'], df_route2['Power_Port_Efficiency'], label='Port Efficiency')
+#plt.plot(df_route2['timestamp'], df_route2['Power_Stbd_Efficiency'], label='Stbd Efficiency')
 plt.plot(df_route2['timestamp'], df_route2['Power_Total_Efficiency'], label='Total Efficiency')
 plt.title('Engine Power Efficiencies Over Time - Route 2')
 plt.xlabel('Timestamp')

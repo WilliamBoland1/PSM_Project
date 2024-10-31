@@ -7,8 +7,9 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 
+#-------------------------Required tank capasity-----------------------------------------------------#
 #Tank capasity: 
-tank_original = 50000 #[L]
+tank_original_liters = 50000 #[L]
 
 #Average fuel consumption based on RV Gunnerius visit: 
 avg_fuel_consumption = 35.78 #[L/h]
@@ -33,7 +34,7 @@ density_methanol = 792 #[kg/m^3]
 #--> determine the tank size required
 
 #Step 1: Calculate tank size in m^3:
-tank_original_cubic = tank_original * 0.001 
+tank_original_cubic = tank_original_liters * 0.001 
 
 #Step 2: Estimate amount of diesel in [kg] at full tank capacity:
 diesel_full_tank_kg = density_marine_diesel * tank_original_cubic
@@ -42,6 +43,35 @@ diesel_full_tank_kg = density_marine_diesel * tank_original_cubic
 methanol_full_tank_kg = diesel_full_tank_kg * ratio_energy_density 
 
 #Step 4: Calculate required tank capacity for equal amount of energy:
-tank_methanol_cubic = methanol_full_tank_kg /density_methanol
+tank_methanol_cubic = methanol_full_tank_kg /density_methanol #[m^3]
+tank_methanol_liters = tank_methanol_cubic * 1000 #[L]
+
+#Solution: 
+print(f'Required tank capacity for diesel: {np.round(tank_original_cubic, 3)} [m^3]')
+print(f'Required tank capacity for diesel: {np.round(tank_original_liters, 3)} [L]')
+print('\n')
+print(f'Required tank capacity for methanol: {np.round(tank_methanol_cubic, 3)} [m^3]')
+print(f'Required tank capacity for methanol: {np.round(tank_methanol_liters, 3)} [L]')
+#----------------------------------------------------------------------------------------------------#
 
 
+#-------------------------The max flow rate of fuel to the engine------------------------------------#
+#Total power output at maximum load:
+tot_power_output = 3*450 #[kW]
+
+#Required energy produced at max load: 
+tot_energy_output = tot_power_output * 3.6
+print(tot_energy_output)
+
+#Assumed thermal efficiency of Diesel-LNG engine: 
+eta_thermal = 0.5 
+
+#Required energy input at max load: 
+tot_energy_input = tot_energy_output/eta_thermal
+print(tot_energy_input)
+
+#Required amount of methanol in [kg] needed to run engine at max capacity: 
+methanol_per_hour_kg = tot_energy_input/energy_methanol
+
+print(f'The max flow rate of fuel to the engine: {methanol_per_hour_kg} [kg/h]')
+#----------------------------------------------------------------------------------------------------#
