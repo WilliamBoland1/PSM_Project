@@ -19,36 +19,28 @@ fuel_data = fuel_data.pivot(index='timestamp', columns='var', values='value')
 # Merge engine load and fuel data into a single DataFrame
 merged_data = engine_load_data.join(fuel_data, how='outer').sort_index().fillna(method='ffill')
 
-# Calculate time differences in hours between each reading
+# Calculate total fuel consumption at each time step by summing fuel consumption across engines
+merged_data['total_fuel_consumption'] = merged_data.filter(like='fuel_consumption').sum(axis=1)
+
+# Calculate time difference in hours between each reading
 time_diff_hours = merged_data.index.to_series().diff().dt.total_seconds().fillna(0) / 3600
 
-# Calculate cumulative fuel consumption for each engine
-for col in merged_data.filter(like='fuel_consumption').columns:
-    # Calculate the fuel consumed per step for each engine
-    merged_data[f'{col}_fuel_consumed_step'] = merged_data[col] * time_diff_hours
-    # Calculate cumulative fuel for each engine
-    merged_data[f'{col}_cumulative_fuel'] = merged_data[f'{col}_fuel_consumed_step'].cumsum()
+# Calculate fuel consumed at each step in liters and kilograms
+merged_data['fuel_consumed_step_L'] = merged_data['total_fuel_consumption'] * time_diff_hours
+merged_data['fuel_consumed_step_kg'] = merged_data['fuel_consumed_step_L'] * 0.82  # Convert to kg
 
-# Calculate total fuel consumption across all engines at each time step and cumulatively
-merged_data['total_fuel_consumption'] = merged_data.filter(like='fuel_consumption').sum(axis=1)
-merged_data['total_fuel_consumed_step'] = merged_data['total_fuel_consumption'] * time_diff_hours
-merged_data['total_cumulative_fuel'] = merged_data['total_fuel_consumed_step'].cumsum()
+# Calculate cumulative fuel consumption in liters and kg over time
+merged_data['cumulative_fuel_L'] = merged_data['fuel_consumed_step_L'].cumsum()
+merged_data['cumulative_fuel_kg'] = merged_data['fuel_consumed_step_kg'].cumsum()
 
-# Plot cumulative fuel consumption for each engine and the total
-plt.figure(figsize=(12, 8))
-
-# Plot for each engine
-for col in merged_data.filter(like='_cumulative_fuel').columns:
-    if 'total' not in col:  # Exclude total from individual engine plots
-        plt.plot(merged_data.index, merged_data[col], label=col.replace('_cumulative_fuel', ''))
-
-# Plot total cumulative fuel consumption
-plt.plot(merged_data.index, merged_data['total_cumulative_fuel'], label="Total Cumulative Fuel Consumption", linewidth=2, linestyle='--')
-
-# Plot styling
+# Plot cumulative fuel consumption over time in both liters and kg
+plt.figure(figsize=(12, 6))
+plt.plot(merged_data.index, merged_data['cumulative_fuel_L'], label="Cumulative Fuel Consumption (L)", color="orange")
+plt.plot(merged_data.index, merged_data['cumulative_fuel_kg'], label="Cumulative Fuel Consumption (Kg)", color="blue")
 plt.xlabel("Time")
-plt.ylabel("Cumulative Fuel Consumption (L)")
-plt.title("Cumulative Fuel Consumption for Each Engine and Total Over Time")
+plt.ylabel("Cumulative Fuel Consumption")
+plt.title("Total Cumulative Fuel Consumption over Time (L and Kg)")
 plt.legend()
 plt.grid(True)
 plt.show()
+
