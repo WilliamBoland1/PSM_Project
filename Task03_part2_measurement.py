@@ -19,20 +19,20 @@ df_engine_3 = df[df['var'] == 'gunnerus/RVG_mqtt/Engine3/fuel_consumption']
 #_____________________________________________
 # Define the adjustable start and stop interval for plotting
 # Route 1
-start_time = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
-stop_time = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+#start_time = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
+#stop_time = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
 
 # Route 2 (uncomment to use this route instead)
-# start_time = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
-# stop_time = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
+#start_time = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+#stop_time = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
 
 # Max time (uncomment to use the entire interval instead)
-# start_time = df_engine_1['timestamp'].min()
-# stop_time = df_engine_1['timestamp'].max()
+start_time = df_engine_1['timestamp'].min()
+stop_time = df_engine_1['timestamp'].max()
 
-# Filter data for the chosen interval
-df_engine_1_interval = df_engine_1[(df_engine_1['timestamp'] >= start_time) & (df_engine_1['timestamp'] <= stop_time)]
-df_engine_3_interval = df_engine_3[(df_engine_3['timestamp'] >= start_time) & (df_engine_3['timestamp'] <= stop_time)]
+# Filter data for the chosen interval and make explicit copies
+df_engine_1_interval = df_engine_1[(df_engine_1['timestamp'] >= start_time) & (df_engine_1['timestamp'] <= stop_time)].copy()
+df_engine_3_interval = df_engine_3[(df_engine_3['timestamp'] >= start_time) & (df_engine_3['timestamp'] <= stop_time)].copy()
 #_____________________________________________
 
 # Convert fuel consumption from liters per hour to kg per hour
