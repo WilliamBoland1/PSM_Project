@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import numpy as np
 
 # Constants for base power of motors
 BASE_POWER_PORT = 500  # kW for Port motor
@@ -27,26 +26,60 @@ df_merged['Port_motor_power'] = df_merged['value_port'] / 100 * BASE_POWER_PORT
 df_merged['Starboard_motor_power'] = df_merged['value_stbd'] / 100 * BASE_POWER_STARBOARD
 df_merged['total_propulsion_power'] = df_merged['Port_motor_power'] + df_merged['Starboard_motor_power']
 
-#Define the start and stop interval for plotting, ensuring they are timezone-aware (UTC), 1 Genset and 2 Genset 
-start_time = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
-stop_time = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+# Define time intervals for Route 1 and Route 2, ensuring timezone-aware (UTC)
+route1_start = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
+route1_stop = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+route2_start = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+route2_stop = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
 
-#Get the start and stop timestamps for the whole trip
+# Get the start and stop timestamps for the entire trip
 start_time_tot = df_merged['timestamp'].min()
 stop_time_tot = df_merged['timestamp'].max()
 
-
-#Filter data for the specified interval (Change Interval: start_time/start_time_tot, stop_time/stop_time_tot)
+# Filter data for the specified intervals
 df_interval = df_merged[(df_merged['timestamp'] >= start_time_tot) & (df_merged['timestamp'] <= stop_time_tot)]
+df_route1 = df_merged[(df_merged['timestamp'] >= route1_start) & (df_merged['timestamp'] <= route1_stop)]
+df_route2 = df_merged[(df_merged['timestamp'] >= route2_start) & (df_merged['timestamp'] <= route2_stop)]
 
-#Plot the interval with Port, Starboard, and Total Propulsion Power (Change Interval: start_time/start_time_tot, stop_time/stop_time_tot)
-plt.figure(figsize=(12, 6))
+# Plot for the entire trip
+plt.figure(figsize=(12, 8))
 plt.plot(df_interval['timestamp'], df_interval['Port_motor_power'], label='Port-side propulsion motor', color='blue')
 plt.plot(df_interval['timestamp'], df_interval['Starboard_motor_power'], label='Starboard-side propulsion motor', color='red')
 plt.plot(df_interval['timestamp'], df_interval['total_propulsion_power'], label='Total propulsion power', color='green')
 plt.xlabel('Time')
 plt.ylabel('Propulsion Power [kW]')
-plt.title(f'Propulsion Power from {start_time_tot.time()} to {stop_time_tot.time()}')
+plt.title(f'Total Propulsion Power from {start_time_tot.time()} to {stop_time_tot.time()}')
+plt.legend(loc='upper right')
+plt.grid(True)
+plt.xticks(rotation=45)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+plt.tight_layout()
+plt.show()
+
+
+# Plot for Route 1
+plt.figure(figsize=(12, 8))
+plt.plot(df_route1['timestamp'], df_route1['Port_motor_power'], label='Port-side propulsion motor', color='blue')
+plt.plot(df_route1['timestamp'], df_route1['Starboard_motor_power'], label='Starboard-side propulsion motor', color='red')
+plt.plot(df_route1['timestamp'], df_route1['total_propulsion_power'], label='Total propulsion power', color='green')
+plt.xlabel('Time')
+plt.ylabel('Propulsion Power [kW]')
+plt.title('Propulsion Power for Route 1')
+plt.legend(loc='upper right')
+plt.grid(True)
+plt.xticks(rotation=45)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+plt.tight_layout()
+plt.show()
+
+# Plot for Route 2
+plt.figure(figsize=(12, 8))
+plt.plot(df_route2['timestamp'], df_route2['Port_motor_power'], label='Port-side propulsion motor', color='blue')
+plt.plot(df_route2['timestamp'], df_route2['Starboard_motor_power'], label='Starboard-side propulsion motor', color='red')
+plt.plot(df_route2['timestamp'], df_route2['total_propulsion_power'], label='Total propulsion power', color='green')
+plt.xlabel('Time')
+plt.ylabel('Propulsion Power [kW]')
+plt.title('Propulsion Power for Route 2')
 plt.legend(loc='upper right')
 plt.grid(True)
 plt.xticks(rotation=45)

@@ -71,7 +71,7 @@ df_efficiencies_power['Engine_Total_Power'] = df_efficiencies_power['Generator_T
 
 #Step 4: Calculate the rate of Power as a percentage. 
 df_efficiencies_power['Engine_Port_Rated_Power'] = df_efficiencies_power['Engine_Port_Power'] / genset_power *100
-df_efficiencies_power['Engine_Stbd_Rated_Power'] = df_efficiencies_power['Engine_Port_Power'] / genset_power *100
+df_efficiencies_power['Engine_Stbd_Rated_Power'] = df_efficiencies_power['Engine_Stbd_Power'] / genset_power *100
 df_efficiencies_power['Engine_Total_Rated_Power'] = df_efficiencies_power['Engine_Total_Power'] / gensets_total_power *100
 #print(df_efficiencies_power[['Engine_Port_Rated_Power', 'Engine_Stbd_Rated_Power', 'Engine_Total_Rated_Power']].head())
 
@@ -87,15 +87,49 @@ df_efficiencies_power['Power_Port_Efficiency'] = df_efficiencies_power['Engine_P
 df_efficiencies_power['Power_Stbd_Efficiency'] = df_efficiencies_power['Engine_Stbd_Efficiency'] * eta_generator * eta_propulsion_motor * eta_switchboard * eta_VSD * 100
 df_efficiencies_power['Power_Total_Efficiency'] = df_efficiencies_power['Engine_Total_Efficiency'] * eta_generator * eta_propulsion_motor * eta_switchboard * eta_VSD * 100
 
+# Define time intervals for Route 1 and Route 2
+route1_start = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
+route1_stop = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+route2_start = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+route2_stop = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
+
+# Filter data for each route
+df_route1 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route1_start) & (df_efficiencies_power['timestamp'] <= route1_stop)]
+df_route2 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route2_start) & (df_efficiencies_power['timestamp'] <= route2_stop)]
+
+
 
 #Step 7: Plot power efficiency
 plt.figure(figsize=(12, 6)) 
-
 plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Port_Efficiency'], label='Port Efficiency')
 plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Stbd_Efficiency'], label='Stbd Efficiency')
 plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Total_Efficiency'], label='Total Efficiency')
-
 plt.title('Engine Power Efficiencies Over Time')
+plt.xlabel('Timestamp')
+plt.ylabel('Efficiency (%)')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# Route 1 plot
+plt.figure(figsize=(12, 6))
+plt.plot(df_route1['timestamp'], df_route1['Power_Port_Efficiency'], label='Port Efficiency')
+plt.plot(df_route1['timestamp'], df_route1['Power_Stbd_Efficiency'], label='Stbd Efficiency')
+plt.plot(df_route1['timestamp'], df_route1['Power_Total_Efficiency'], label='Total Efficiency')
+plt.title('Engine Power Efficiencies Over Time - Route 1')
+plt.xlabel('Timestamp')
+plt.ylabel('Efficiency (%)')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Route 2 plot
+plt.figure(figsize=(12, 6))
+plt.plot(df_route2['timestamp'], df_route2['Power_Port_Efficiency'], label='Port Efficiency')
+plt.plot(df_route2['timestamp'], df_route2['Power_Stbd_Efficiency'], label='Stbd Efficiency')
+plt.plot(df_route2['timestamp'], df_route2['Power_Total_Efficiency'], label='Total Efficiency')
+plt.title('Engine Power Efficiencies Over Time - Route 2')
 plt.xlabel('Timestamp')
 plt.ylabel('Efficiency (%)')
 plt.legend()
