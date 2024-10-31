@@ -33,14 +33,45 @@ merged_data['fuel_consumed_step_kg'] = merged_data['fuel_consumed_step_L'] * 0.8
 merged_data['cumulative_fuel_L'] = merged_data['fuel_consumed_step_L'].cumsum()
 merged_data['cumulative_fuel_kg'] = merged_data['fuel_consumed_step_kg'].cumsum()
 
-# Plot cumulative fuel consumption over time in both liters and kg
+# Define the time intervals for Route 1 and Route 2
+route1_start = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
+route1_stop = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+route2_start = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
+route2_stop = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
+
+# Filter data for each route
+df_route1 = merged_data[(merged_data.index >= route1_start) & (merged_data.index <= route1_stop)]
+df_route2 = merged_data[(merged_data.index >= route2_start) & (merged_data.index <= route2_stop)]
+
+# Original plot for the entire interval
 plt.figure(figsize=(12, 6))
 plt.plot(merged_data.index, merged_data['cumulative_fuel_L'], label="Cumulative Fuel Consumption (L)", color="orange")
 plt.plot(merged_data.index, merged_data['cumulative_fuel_kg'], label="Cumulative Fuel Consumption (Kg)", color="blue")
 plt.xlabel("Time")
 plt.ylabel("Cumulative Fuel Consumption")
-plt.title("Total Cumulative Fuel Consumption over Time (L and Kg)")
+plt.title("Total Cumulative Fuel Consumption Over Time (L and Kg)")
 plt.legend()
 plt.grid(True)
 plt.show()
 
+# Plot for Route 1
+plt.figure(figsize=(12, 6))
+plt.plot(df_route1.index, df_route1['cumulative_fuel_L'], label="Cumulative Fuel Consumption (L) - Route 1", color="orange")
+plt.plot(df_route1.index, df_route1['cumulative_fuel_kg'], label="Cumulative Fuel Consumption (Kg) - Route 1", color="blue")
+plt.xlabel("Time")
+plt.ylabel("Cumulative Fuel Consumption")
+plt.title("Cumulative Fuel Consumption Over Time - Route 1 (L and Kg)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Plot for Route 2
+plt.figure(figsize=(12, 6))
+plt.plot(df_route2.index, df_route2['cumulative_fuel_L'], label="Cumulative Fuel Consumption (L) - Route 2", color="orange")
+plt.plot(df_route2.index, df_route2['cumulative_fuel_kg'], label="Cumulative Fuel Consumption (Kg) - Route 2", color="blue")
+plt.xlabel("Time")
+plt.ylabel("Cumulative Fuel Consumption")
+plt.title("Cumulative Fuel Consumption Over Time - Route 2 (L and Kg)")
+plt.legend()
+plt.grid(True)
+plt.show()
