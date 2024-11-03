@@ -49,6 +49,21 @@ df_route1['cumulative_fuel_kg'] -= df_route1['cumulative_fuel_kg'].iloc[0]
 df_route2['cumulative_fuel_L'] -= df_route2['cumulative_fuel_L'].iloc[0]
 df_route2['cumulative_fuel_kg'] -= df_route2['cumulative_fuel_kg'].iloc[0]
 
+# Print cumulative fuel consumption for the entire dataset
+print("Cumulative Fuel Consumption at End of Interval (Entire Dataset):")
+print(f"Liters: {merged_data['cumulative_fuel_L'].iloc[-1]:.2f} L")
+print(f"Kilograms: {merged_data['cumulative_fuel_kg'].iloc[-1]:.2f} kg\n")
+
+# Print cumulative fuel consumption for Route 1
+print("Cumulative Fuel Consumption at End of Route 1:")
+print(f"Liters: {df_route1['cumulative_fuel_L'].iloc[-1]:.2f} L")
+print(f"Kilograms: {df_route1['cumulative_fuel_kg'].iloc[-1]:.2f} kg\n")
+
+# Print cumulative fuel consumption for Route 2
+print("Cumulative Fuel Consumption at End of Route 2:")
+print(f"Liters: {df_route2['cumulative_fuel_L'].iloc[-1]:.2f} L")
+print(f"Kilograms: {df_route2['cumulative_fuel_kg'].iloc[-1]:.2f} kg\n")
+
 # Original plot for the entire interval
 plt.figure(figsize=(12, 6))
 plt.plot(merged_data.index, merged_data['cumulative_fuel_L'], label="Cumulative Fuel Consumption (L)", color="orange")
