@@ -21,8 +21,10 @@ total_power_required = 450*3 #[kW]
 #Energy density: 
 energy_marine_diesel = 45.4 #[MJ/kg] given in engine data
 energy_methanol = 22 #[MJ/kg], Link: https://www.methanology.com/mymethanol#no-back
+energy_LNG = 54 #[MJ/kg], Link: https://www.unitrove.com/engineering/gas-technology/liquefied-natural-gas
 
 ratio_energy_density = energy_marine_diesel / energy_methanol #[-], merine diesel devided on methanol 
+ratio_energy_density_LNG = energy_marine_diesel / energy_LNG
 
 #Density at 15 degrees celcius: 
 density_marine_diesel = 820 #[kg/m^3]
@@ -46,6 +48,10 @@ methanol_full_tank_kg = diesel_full_tank_kg * ratio_energy_density
 tank_methanol_cubic = methanol_full_tank_kg /density_methanol #[m^3]
 tank_methanol_liters = tank_methanol_cubic * 1000 #[L]
 
+
+
+
+
 #Solution: 
 print(f'Required tank capacity for diesel: {np.round(tank_original_cubic, 3)} [m^3]')
 print(f'Required tank capacity for diesel: {np.round(tank_original_liters, 3)} [L]')
@@ -57,21 +63,23 @@ print(f'Required tank capacity for methanol: {np.round(tank_methanol_liters, 3)}
 
 #-------------------------The max flow rate of fuel to the engine------------------------------------#
 #Total power output at maximum load:
-tot_power_output = 3*450 #[kW]
-
-#Required energy produced at max load: 
-tot_energy_output = tot_power_output * 3.6
-print(tot_energy_output)
+tot_energy_output = (3*450)/1000 #[MJ/S]
 
 #Assumed thermal efficiency of Diesel-LNG engine: 
 eta_thermal = 0.5 
 
 #Required energy input at max load: 
-tot_energy_input = tot_energy_output/eta_thermal
+tot_energy_input = tot_energy_output/eta_thermal #[MJ/S]
 print(tot_energy_input)
 
 #Required amount of methanol in [kg] needed to run engine at max capacity: 
-methanol_per_hour_kg = tot_energy_input/energy_methanol
+methanol_per_sec_kg = tot_energy_input/energy_methanol
+diesel_per_sec_kg = tot_energy_input/energy_marine_diesel
 
-print(f'The max flow rate of fuel to the engine: {methanol_per_hour_kg} [kg/h]')
+
+print(f'The max flow rate of marine diesel to the engine: {diesel_per_sec_kg*3600} [kg/h]')
+print(f'The max flow rate of marine diesel to the engine: {diesel_per_sec_kg} [kg/s]')
+print('\n')
+print(f'The max flow rate of methanol to the engine: {methanol_per_sec_kg*3600} [kg/h]')
+print(f'The max flow rate of methanol to the engine: {methanol_per_sec_kg} [kg/s]')
 #----------------------------------------------------------------------------------------------------#
