@@ -126,8 +126,12 @@ df_route1['Cumulative_Fuel_Consumption'] = df_route1['Fuel_Consumed'].cumsum()
 df_route2['Cumulative_Fuel_Consumption'] = df_route2['Fuel_Consumed'].cumsum()
 
 # Display the first few rows to verify
-print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].head())
-print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].tail())
+##print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].head())
+##print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].tail())
+
+print(f"Kilograms: {df_fuel_consumption['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+print(f"Kilograms: {df_route1['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+print(f"Kilograms: {df_route2['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
 
 # Plot for Total Cumulative Fuel Consumption in Kg
 plt.figure(figsize=(12, 6))

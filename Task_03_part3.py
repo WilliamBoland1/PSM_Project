@@ -21,8 +21,10 @@ total_power_required = 450*3 #[kW]
 #Energy density: 
 energy_marine_diesel = 45.4 #[MJ/kg] given in engine data
 energy_methanol = 22 #[MJ/kg], Link: https://www.methanology.com/mymethanol#no-back
+energy_LNG = 54 #[MJ/kg], Link: https://www.unitrove.com/engineering/gas-technology/liquefied-natural-gas
 
 ratio_energy_density = energy_marine_diesel / energy_methanol #[-], merine diesel devided on methanol 
+ratio_energy_density_LNG = energy_marine_diesel / energy_LNG
 
 #Density at 15 degrees celcius: 
 density_marine_diesel = 820 #[kg/m^3]
@@ -45,6 +47,10 @@ methanol_full_tank_kg = diesel_full_tank_kg * ratio_energy_density
 #Step 4: Calculate required tank capacity for equal amount of energy:
 tank_methanol_cubic = methanol_full_tank_kg /density_methanol #[m^3]
 tank_methanol_liters = tank_methanol_cubic * 1000 #[L]
+
+
+
+
 
 #Solution: 
 print(f'Required tank capacity for diesel: {np.round(tank_original_cubic, 3)} [m^3]')
