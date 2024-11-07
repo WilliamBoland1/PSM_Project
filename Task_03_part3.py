@@ -66,15 +66,19 @@ print(f'Required tank capacity for methanol: {np.round(tank_methanol_liters, 3)}
 tot_energy_output = (3*450)/1000 #[MJ/S]
 
 #Assumed thermal efficiency of Diesel-LNG engine: 
-eta_thermal = 0.5 
+eta_thermal_methanol_engine = 0.4129 # Link: https://www.sciencedirect.com/science/article/pii/S0016236122017902
+eta_energy_diesel = 0.33 # Link: https://en.wikipedia.org/wiki/Thermal_efficiency
+
 
 #Required energy input at max load: 
-tot_energy_input = tot_energy_output/eta_thermal #[MJ/S]
-print(tot_energy_input)
+tot_energy_input_methanol = tot_energy_output/eta_thermal_methanol_engine #[MJ/S]
+tot_energy_input_diesel = tot_energy_output/eta_energy_diesel #[MJ/S]
+print(tot_energy_input_methanol)
+print(tot_energy_input_diesel)
 
 #Required amount of methanol in [kg] needed to run engine at max capacity: 
-methanol_per_sec_kg = tot_energy_input/energy_methanol
-diesel_per_sec_kg = tot_energy_input/energy_marine_diesel
+methanol_per_sec_kg = tot_energy_input_methanol/energy_methanol
+diesel_per_sec_kg = tot_energy_input_diesel/energy_marine_diesel
 
 
 print(f'The max flow rate of marine diesel to the engine: {diesel_per_sec_kg*3600} [kg/h]')
