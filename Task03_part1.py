@@ -104,7 +104,7 @@ engine_load_at_min = df_merged.loc[df_merged['timestamp']== timestamp_min, 'engi
 
 #Torquing time
 
-#T = P/omega = P/[rad/s] 
+#T = P/omega = P[W]/[rad/s] 
 torque_at_max_eff = (engine_load_at_max*60)/(2*np.pi*rpm_1_at_max) * 1000 #Multiplied by 10^3 to make up for [kW] to [W] conversion
 torque_at_min_eff = (engine_load_at_min*60)/(2*np.pi*rpm_1_at_min) * 1000
 
@@ -131,10 +131,6 @@ plt.show()
 
 #BMEP
 #####################################################################################################
-#Calculating displaced volume, Vd = pi * r^2 * length_of_stroke
-# cylinder_diameter = 127 * 1e-3 #[m]
-# piston_stroke = 154 * 1e-3 #[m]
-# displaced_volume = np.pi * (cylinder_diameter/2)**2*piston_stroke #calculated
 displaced_volume = 0.0156 #[m^3] From data engine
 
 #Other constants
