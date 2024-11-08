@@ -7,7 +7,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 
-#-------------------------Required tank capasity-----------------------------------------------------#
 #Tank capasity: 
 tank_original_liters = 50000 #[L]
 
@@ -20,15 +19,17 @@ total_power_required = 450*3 #[kW]
 
 #Energy density: 
 energy_marine_diesel = 45.4 #[MJ/kg] given in engine data
-energy_methanol = 22 #[MJ/kg], Link: https://www.methanology.com/mymethanol#no-back
-energy_LNG = 54 #[MJ/kg], Link: https://www.unitrove.com/engineering/gas-technology/liquefied-natural-gas
+energy_methanol = 19.7 #[MJ/kg] given in lecture 
 
 ratio_energy_density = energy_marine_diesel / energy_methanol #[-], merine diesel devided on methanol 
-ratio_energy_density_LNG = energy_marine_diesel / energy_LNG
+
 
 #Density at 15 degrees celcius: 
 density_marine_diesel = 820 #[kg/m^3]
 density_methanol = 792 #[kg/m^3]
+
+
+#-------------------------Required tank capasity-----------------------------------------------------#
 
 #Remember: 1 L = 0.001 m^3 and 1m^3 = 1000L 
 
@@ -66,15 +67,19 @@ print(f'Required tank capacity for methanol: {np.round(tank_methanol_liters, 3)}
 tot_energy_output = (3*450)/1000 #[MJ/S]
 
 #Assumed thermal efficiency of Diesel-LNG engine: 
-eta_thermal = 0.5 
+eta_thermal_methanol_engine = 0.4129 # Link: https://www.sciencedirect.com/science/article/pii/S0016236122017902
+eta_energy_diesel = 0.41761 # Link: https://en.wikipedia.org/wiki/Thermal_efficiency
+
 
 #Required energy input at max load: 
-tot_energy_input = tot_energy_output/eta_thermal #[MJ/S]
-print(tot_energy_input)
+tot_energy_input_methanol = tot_energy_output/eta_thermal_methanol_engine #[MJ/S]
+tot_energy_input_diesel = tot_energy_output/eta_energy_diesel #[MJ/S]
+print(tot_energy_input_methanol)
+print(tot_energy_input_diesel)
 
 #Required amount of methanol in [kg] needed to run engine at max capacity: 
-methanol_per_sec_kg = tot_energy_input/energy_methanol
-diesel_per_sec_kg = tot_energy_input/energy_marine_diesel
+methanol_per_sec_kg = tot_energy_input_methanol/energy_methanol
+diesel_per_sec_kg = tot_energy_input_diesel/energy_marine_diesel
 
 
 print(f'The max flow rate of marine diesel to the engine: {diesel_per_sec_kg*3600} [kg/h]')

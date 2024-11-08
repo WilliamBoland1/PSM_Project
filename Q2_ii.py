@@ -27,7 +27,7 @@ stop_time_tot = df['timestamp'].max()
 df_engine_1_interval = df_engine_1[(df_engine_1['timestamp'] >= start_time_tot) & (df_engine_1['timestamp'] <= stop_time_tot)]
 df_engine_3_interval = df_engine_3[(df_engine_3['timestamp'] >= start_time_tot) & (df_engine_3['timestamp'] <= stop_time_tot)]
 
-# Convert fuel consumption from liters per hour to kg per hour
+#Convert fuel consumption from liters per hour to kg per hour
 df_engine_1_interval['fuel_kg_per_hour'] = df_engine_1_interval['value'] * density
 df_engine_3_interval['fuel_kg_per_hour'] = df_engine_3_interval['value'] * density
 

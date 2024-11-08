@@ -15,6 +15,8 @@ eta_generator = 0.96
 genset_power = 450 #[kW]
 gensets_total_power = 900 #[kW]
 
+gross_spesific_energy = 45.4 *(1/3.6) #[kWh/kg]
+
 #Efficiency in typical combustion engine, x - Precentage of rated power
 def eta_engine(x): 
     return -0.0024*x**2 + 0.402*x + 27.4382
@@ -87,51 +89,46 @@ df_efficiencies_power['Power_Port_Efficiency'] = df_efficiencies_power['Engine_P
 df_efficiencies_power['Power_Stbd_Efficiency'] = df_efficiencies_power['Engine_Stbd_Efficiency'] * eta_generator * eta_propulsion_motor * eta_switchboard * eta_VSD * 100
 df_efficiencies_power['Power_Total_Efficiency'] = df_efficiencies_power['Engine_Total_Efficiency'] * eta_generator * eta_propulsion_motor * eta_switchboard * eta_VSD * 100
 
-#Define time intervals for Route 1 and Route 2
+# Define time intervals for Route 1 and Route 2
 route1_start = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
 route1_stop = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
 route2_start = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
 route2_stop = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
 
-#Filter data for each route
+# Filter data for each route
 df_route1 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route1_start) & (df_efficiencies_power['timestamp'] <= route1_stop)]
 df_route2 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route2_start) & (df_efficiencies_power['timestamp'] <= route2_stop)]
 
+df_fuel_consumption = df_efficiencies_power[['timestamp', 'Power_Total_Efficiency', 'total_propulsion_power']].copy()
 
+df_fuel_consumption['Fuel_flow_rate_per_hour'] = df_fuel_consumption['total_propulsion_power'] / ((df_fuel_consumption['Power_Total_Efficiency']/100) * gross_spesific_energy)
+df_fuel_consumption['Fuel_flow_rate_per_sec'] = df_fuel_consumption['Fuel_flow_rate_per_hour'] / 3600
 
-#Step 7: Plot power efficiency
-plt.figure(figsize=(12, 6)) 
-#plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Port_Efficiency'], label='Port Efficiency')
-#plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Stbd_Efficiency'], label='Stbd Efficiency')
-plt.plot(df_efficiencies_power['timestamp'], df_efficiencies_power['Power_Total_Efficiency'], label='Total Efficiency')
-plt.title('Engine Power Efficiencies Over Time')
-plt.xlabel('Timestamp')
-plt.ylabel('Efficiency (%)')
-plt.legend()
-plt.grid(True)
-plt.show()
+# Convert timestamps to datetime format if they are not already
+df_fuel_consumption['timestamp'] = pd.to_datetime(df_fuel_consumption['timestamp'])
 
+# Calculate time differences in seconds
+df_fuel_consumption['Delta_t'] = df_fuel_consumption['timestamp'].diff().dt.total_seconds().fillna(0)
 
-#Route 1 plot
-plt.figure(figsize=(12, 6))
-#plt.plot(df_route1['timestamp'], df_route1['Power_Port_Efficiency'], label='Port Efficiency')
-#plt.plot(df_route1['timestamp'], df_route1['Power_Stbd_Efficiency'], label='Stbd Efficiency')
-plt.plot(df_route1['timestamp'], df_route1['Power_Total_Efficiency'], label='Total Efficiency')
-plt.title('Engine Power Efficiencies Over Time - Route 1')
-plt.xlabel('Timestamp')
-plt.ylabel('Efficiency (%)')
-plt.legend()
-plt.grid(True)
-plt.show()
+# Calculate fuel consumption for each time step (Fuel_flow_rate * Delta_t)
+# Fuel_flow_rate is in units of fuel per second if it represents an instantaneous rate
+df_fuel_consumption['Fuel_Consumed'] = df_fuel_consumption['Fuel_flow_rate_per_sec'] * df_fuel_consumption['Delta_t']
 
-#Route 2 plot
-plt.figure(figsize=(12, 6))
-#plt.plot(df_route2['timestamp'], df_route2['Power_Port_Efficiency'], label='Port Efficiency')
-#plt.plot(df_route2['timestamp'], df_route2['Power_Stbd_Efficiency'], label='Stbd Efficiency')
-plt.plot(df_route2['timestamp'], df_route2['Power_Total_Efficiency'], label='Total Efficiency')
-plt.title('Engine Power Efficiencies Over Time - Route 2')
-plt.xlabel('Timestamp')
-plt.ylabel('Efficiency (%)')
-plt.legend()
-plt.grid(True)
-plt.show()
+# Calculate cumulative fuel consumption
+df_fuel_consumption['Cumulative_Fuel_Consumption'] = df_fuel_consumption['Fuel_Consumed'].cumsum()
+
+# Filter data for each route
+df_route1 = df_fuel_consumption[(df_fuel_consumption['timestamp'] >= route1_start) & (df_fuel_consumption['timestamp'] <= route1_stop)].copy()
+df_route2 = df_fuel_consumption[(df_fuel_consumption['timestamp'] >= route2_start) & (df_fuel_consumption['timestamp'] <= route2_stop)].copy()
+
+# Calculate cumulative fuel consumption for Route 1 and Route 2 separately
+df_route1['Cumulative_Fuel_Consumption'] = df_route1['Fuel_Consumed'].cumsum()
+df_route2['Cumulative_Fuel_Consumption'] = df_route2['Fuel_Consumed'].cumsum()
+
+# Display the first few rows to verify
+##print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].head())
+##print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].tail())
+
+print(f"Kilograms: {df_fuel_consumption['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+print(f"Kilograms: {df_route1['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+print(f"Kilograms: {df_route2['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")

@@ -129,13 +129,72 @@ df_route2['Cumulative_Fuel_Consumption'] = df_route2['Fuel_Consumed'].cumsum()
 ##print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].head())
 ##print(df_fuel_consumption[['Fuel_flow_rate_per_sec', 'Delta_t', 'Fuel_Consumed', 'Cumulative_Fuel_Consumption']].tail())
 
-print(f"Kilograms: {df_fuel_consumption['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
-print(f"Kilograms: {df_route1['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
-print(f"Kilograms: {df_route2['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+# Load data from the CSV file
+data = pd.read_csv("data.csv", sep=';')
+
+# Convert timestamp to a datetime format and sort by time for consistency
+data['timestamp'] = pd.to_datetime(data['timestamp'])
+data.sort_values(by='timestamp', inplace=True)
+
+# Filter relevant rows: engine load and fuel consumption for each engine
+engine_load_data = data[data['var'].str.contains("engine_load")]
+fuel_data = data[data['var'].str.contains("fuel_consumption")]
+
+# Pivot data so each engine's load and fuel consumption are in separate columns
+engine_load_data = engine_load_data.pivot(index='timestamp', columns='var', values='value')
+fuel_data = fuel_data.pivot(index='timestamp', columns='var', values='value')
+
+# Merge engine load and fuel data into a single DataFrame
+sync_data = engine_load_data.join(fuel_data, how='outer').sort_index().fillna(method='ffill')
+
+# Calculate total fuel consumption at each time step by summing fuel consumption across engines
+sync_data['total_fuel_consumption'] = sync_data.filter(like='fuel_consumption').sum(axis=1)
+
+# Calculate time difference in hours between each reading
+time_diff_hours = sync_data.index.to_series().diff().dt.total_seconds().fillna(0) / 3600
+
+# Calculate fuel consumed at each step in liters and kilograms
+sync_data['fuel_consumed_step_L'] = sync_data['total_fuel_consumption'] * time_diff_hours
+sync_data['fuel_consumed_step_kg'] = sync_data['fuel_consumed_step_L'] * 0.82  # Convert to kg
+
+# Calculate cumulative fuel consumption in liters and kg over time
+sync_data['cumulative_fuel_L'] = sync_data['fuel_consumed_step_L'].cumsum()
+sync_data['cumulative_fuel_kg'] = sync_data['fuel_consumed_step_kg'].cumsum()
+
+# Filter data for each route
+df_measured_route1 = sync_data[(sync_data.index >= route1_start) & (sync_data.index <= route1_stop)].copy()
+df_measured_route2 = sync_data[(sync_data.index >= route2_start) & (sync_data.index <= route2_stop)].copy()
+
+# Reset cumulative fuel consumption to start from 0 for Route 1 and Route 2
+df_measured_route1['cumulative_fuel_L'] -= df_measured_route1['cumulative_fuel_L'].iloc[0]
+df_measured_route1['cumulative_fuel_kg'] -= df_measured_route1['cumulative_fuel_kg'].iloc[0]
+df_measured_route2['cumulative_fuel_L'] -= df_measured_route2['cumulative_fuel_L'].iloc[0]
+df_measured_route2['cumulative_fuel_kg'] -= df_measured_route2['cumulative_fuel_kg'].iloc[0]
+
+# Print cumulative fuel consumption for the entire dataset
+print("Cumulative Fuel Consumption at End of Interval (Entire Dataset):")
+print(f"Liters: {sync_data['cumulative_fuel_L'].iloc[-1]:.2f} L")
+print(f"Kilograms: {sync_data['cumulative_fuel_kg'].iloc[-1]:.2f} kg\n")
+
+# Print cumulative fuel consumption for Route 1
+print("Cumulative Fuel Consumption at End of Route 1:")
+print(f"Liters: {df_measured_route1['cumulative_fuel_L'].iloc[-1]:.2f} L")
+print(f"Kilograms: {df_measured_route1['cumulative_fuel_kg'].iloc[-1]:.2f} kg\n")
+
+# Print cumulative fuel consumption for Route 2
+print("Cumulative Fuel Consumption at End of Route 2:")
+print(f"Liters: {df_measured_route2['cumulative_fuel_L'].iloc[-1]:.2f} L")
+print(f"Kilograms: {df_measured_route2['cumulative_fuel_kg'].iloc[-1]:.2f} kg\n")
+
+
+print(f"Fuel consumption entire voyage: {df_fuel_consumption['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+print(f"Fuel consumption route 1: {df_route1['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
+print(f"Fuel consumption route 2: {df_route2['Cumulative_Fuel_Consumption'].iloc[-1]:.2f} [kg]\n")
 
 # Plot for Total Cumulative Fuel Consumption in Kg
 plt.figure(figsize=(12, 6))
-plt.plot(df_fuel_consumption['timestamp'], df_fuel_consumption['Cumulative_Fuel_Consumption'], label="Cumulative Fuel Consumption (Kg)", color="blue")
+plt.plot(df_fuel_consumption['timestamp'], df_fuel_consumption['Cumulative_Fuel_Consumption'], label="Cumulative Fuel Consumption (Kg) - Theoretical", color="blue")
+plt.plot(sync_data.index, sync_data['cumulative_fuel_kg'], label='Cumulative Fuel Consumption (Kg) - Measured', color='red')
 plt.xlabel("Time")
 plt.ylabel("Cumulative Fuel Consumption (Kg)")
 plt.title("Total Cumulative Fuel Consumption Over Time (Kg)")
@@ -149,7 +208,8 @@ plt.show()
 
 # Plot for Route 1 Cumulative Fuel Consumption in Kg
 plt.figure(figsize=(12, 6))
-plt.plot(df_route1['timestamp'], df_route1['Cumulative_Fuel_Consumption'], label="Cumulative Fuel Consumption (Kg) - Route 1", color="blue")
+plt.plot(df_route1['timestamp'], df_route1['Cumulative_Fuel_Consumption'], label="Cumulative Fuel Consumption (Kg) - Theoretical", color="blue")
+plt.plot(df_measured_route1.index, df_measured_route1['cumulative_fuel_kg'], label='Cumulative Fuel Consumption (Kg) - Measured', color='red')
 plt.xlabel("Time")
 plt.ylabel("Cumulative Fuel Consumption (Kg)")
 plt.title("Cumulative Fuel Consumption Over Time - Route 1 (Kg)")
@@ -163,7 +223,8 @@ plt.show()
 
 # Plot for Route 2 Cumulative Fuel Consumption in Kg
 plt.figure(figsize=(12, 6))
-plt.plot(df_route2['timestamp'], df_route2['Cumulative_Fuel_Consumption'], label="Cumulative Fuel Consumption (Kg) - Route 2", color="blue")
+plt.plot(df_route2['timestamp'], df_route2['Cumulative_Fuel_Consumption'], label="Cumulative Fuel Consumption (Kg) - Theoretical", color="blue")
+plt.plot(df_measured_route2.index, df_measured_route2['cumulative_fuel_kg'], label='Cumulative Fuel Consumption (Kg) - Measured', color='red')
 plt.xlabel("Time")
 plt.ylabel("Cumulative Fuel Consumption (Kg)")
 plt.title("Cumulative Fuel Consumption Over Time - Route 2 (Kg)")
