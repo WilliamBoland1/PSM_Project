@@ -87,13 +87,13 @@ df_efficiencies_power['Power_Port_Efficiency'] = df_efficiencies_power['Engine_P
 df_efficiencies_power['Power_Stbd_Efficiency'] = df_efficiencies_power['Engine_Stbd_Efficiency'] * eta_generator * eta_propulsion_motor * eta_switchboard * eta_VSD * 100
 df_efficiencies_power['Power_Total_Efficiency'] = df_efficiencies_power['Engine_Total_Efficiency'] * eta_generator * eta_propulsion_motor * eta_switchboard * eta_VSD * 100
 
-# Define time intervals for Route 1 and Route 2
+#Define time intervals for Route 1 and Route 2
 route1_start = pd.to_datetime('2024-09-10 06:30:26').tz_localize('UTC')
 route1_stop = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
 route2_start = pd.to_datetime('2024-09-10 06:45:30').tz_localize('UTC')
 route2_stop = pd.to_datetime('2024-09-10 07:07:00').tz_localize('UTC')
 
-# Filter data for each route
+#Filter data for each route
 df_route1 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route1_start) & (df_efficiencies_power['timestamp'] <= route1_stop)]
 df_route2 = df_efficiencies_power[(df_efficiencies_power['timestamp'] >= route2_start) & (df_efficiencies_power['timestamp'] <= route2_stop)]
 
@@ -112,7 +112,7 @@ plt.grid(True)
 plt.show()
 
 
-# Route 1 plot
+#Route 1 plot
 plt.figure(figsize=(12, 6))
 #plt.plot(df_route1['timestamp'], df_route1['Power_Port_Efficiency'], label='Port Efficiency')
 #plt.plot(df_route1['timestamp'], df_route1['Power_Stbd_Efficiency'], label='Stbd Efficiency')
@@ -124,7 +124,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-# Route 2 plot
+#Route 2 plot
 plt.figure(figsize=(12, 6))
 #plt.plot(df_route2['timestamp'], df_route2['Power_Port_Efficiency'], label='Port Efficiency')
 #plt.plot(df_route2['timestamp'], df_route2['Power_Stbd_Efficiency'], label='Stbd Efficiency')
